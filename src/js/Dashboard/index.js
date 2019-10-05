@@ -20,6 +20,7 @@ class Dashboard extends React.Component {
     }
 
     loading() {
+        /* 
         if (this.props.data('users', this.props.firebase.auth().currentUser.uid)) {
             const r = this.props.data('users', this.props.firebase.auth().currentUser.uid)['rooms'];
             for (var i in r) {
@@ -29,7 +30,7 @@ class Dashboard extends React.Component {
             }
         } else {
             return true;
-        }
+        }*/
         return false;
     }
 
@@ -63,6 +64,7 @@ class Dashboard extends React.Component {
     }
 
     render() {
+        /*
         if (this.loading()) {
             return (
                 <Loading></Loading>
@@ -79,7 +81,10 @@ class Dashboard extends React.Component {
                     <Button variant="contained" color="secondary" onClick={()=>this.resolveClick("CreateRoom")}>CREATE NEW ROOM</Button>
                 </div>
             )
-        }
+        }*/
+        return (
+            <Typography variant="h1">DASHBOARD</Typography>
+        )
     }
 }
 
