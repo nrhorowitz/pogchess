@@ -21,6 +21,31 @@ class Landing extends React.Component {
             }
         } else if (type === "SignUp") {
             
+        } else if (type === "Logout") {
+            this.props.firebase.auth().signOut().then(() => {
+                console.log("SIGNEDOUT");
+                console.log(this.props.firebase.auth().currentUser);
+            }).catch((err) => {
+                console.log(err);
+            })
+        }
+    }
+
+    renderAuthButtons() {
+        console.log(this.props.currentUser);
+        if (this.props.firebase.auth().currentUser) {
+            return (
+                <div>
+                    <Button variant="contained" color="secondary" onClick={()=>this.resolveClick("Logout")}>LOGOUT</Button>
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    <Button variant="contained" color="secondary" onClick={()=>this.resolveClick("Login")}>LOGIN</Button>
+                    <Button variant="contained" color="secondary" onClick={()=>this.resolveClick("SignUp")}>SIGNUP</Button>
+                </div>
+            )
         }
     }
 
@@ -33,8 +58,7 @@ class Landing extends React.Component {
             return (
                 <div>
                     <Typography variant="h1">LANDING</Typography>
-                    <Button variant="contained" color="secondary" onClick={()=>this.resolveClick("Login")}>LOGIN</Button>
-                    <Button variant="contained" color="secondary" onClick={()=>this.resolveClick("SignUp")}>SIGNUP</Button>
+                    {this.renderAuthButtons()}
                     <Button variant="contained" color="secondary" onClick={()=>this.resolveClick("PlayAsGuest")}>PLAY AS GUEST</Button>
                     <Leaderboard></Leaderboard>
                 </div>
