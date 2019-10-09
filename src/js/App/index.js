@@ -22,7 +22,6 @@ class App extends React.Component {
         this.state = {
           loading: true,
           localData: {},
-          currentUser: null,
         }
         this.renderView = this.renderView.bind(this);
         this.data = this.data.bind(this);
@@ -33,10 +32,8 @@ class App extends React.Component {
     componentWillMount() {
       firebase.auth().onAuthStateChanged((user) => {
         if (user) {
-          this.setState({currentUser: user});
           this.setState({loading: false});
         } else {
-          this.setState({currentUser: null});
           this.setState({loading: false});
         }
       });
@@ -131,7 +128,6 @@ class App extends React.Component {
             return (
                 <Landing
                     firebase = {firebase}
-                    currentUser = {this.state.currentUser}
                 ></Landing>
             )
         } else if (name === "Login") {

@@ -2,6 +2,8 @@ import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Leaderboard from './Leaderboard.js';
+import Background from './Background.js';
+import './card.css';
 import { BrowserRouter as Router, Route, Link, Redirect, Switch } from "react-router-dom";
 
 
@@ -32,7 +34,6 @@ class Landing extends React.Component {
     }
 
     renderAuthButtons() {
-        console.log(this.props.currentUser);
         if (this.props.firebase.auth().currentUser) {
             return (
                 <div>
@@ -42,8 +43,7 @@ class Landing extends React.Component {
         } else {
             return (
                 <div>
-                    <Button variant="contained" color="secondary" onClick={()=>this.resolveClick("Login")}>LOGIN</Button>
-                    <Button variant="contained" color="secondary" onClick={()=>this.resolveClick("SignUp")}>SIGNUP</Button>
+                    <Button variant="contained" color="secondary" onClick={()=>this.resolveClick("Login")}>SIGN IN</Button>
                 </div>
             )
         }
@@ -57,10 +57,15 @@ class Landing extends React.Component {
         } else {
             return (
                 <div>
-                    <Typography variant="h1">LANDING</Typography>
-                    {this.renderAuthButtons()}
-                    <Button variant="contained" color="secondary" onClick={()=>this.resolveClick("PlayAsGuest")}>PLAY AS GUEST</Button>
-                    <Leaderboard></Leaderboard>
+                    <Background active={true}></Background>
+                    <div class="card">
+                        <Typography variant="h2">AUTOCHESS</Typography>
+                        {this.renderAuthButtons()}
+                        <Button variant="contained" color="secondary" onClick={()=>this.resolveClick("PlayAsGuest")}>PLAY AS GUEST</Button>
+                    </div>
+                    <Leaderboard
+                        playerMap = {null}
+                    ></Leaderboard>
                 </div>
             )
         }
