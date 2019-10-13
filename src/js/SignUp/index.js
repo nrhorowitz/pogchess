@@ -72,10 +72,6 @@ class SignUp extends React.Component {
                         {this.renderMessage()}
                         <Button variant='contained' onClick={()=>this.resolveClick("SignUp")}>SIGNUP</Button>
                         <Button variant='contained'>LOGIN</Button>
-                        <div className='log-footer-area'>
-                            <div className='log-footer'>Don't have an account? <Link to="/signup?id=1"><span className='link'>Join us</span></Link></div>
-                            <div className='log-footer'>By continuing, you agree to the <br/><Link to="/TOS"><span className='link'>Terms of Service</span></Link> and <Link to="/privacy"><span className='link'>Privacy Policy</span></Link></div>
-                        </div>
                     </div>
                 </div>
             )
