@@ -13,8 +13,7 @@ class Character:
         self.mv_spd = mv_spd
         self.mana = mana
         self.range = range
-        self.x = x
-        self.y = y
+        self.pos = (0, 0) #x, y
 
 
     def attack(self, opponent):
