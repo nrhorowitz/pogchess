@@ -18,6 +18,9 @@ class Room extends React.Component {
             if (true) { //TODO: check token
                 this.setState({redirect: '/login'});
             }
+        } else if (type === "PurchaseChampion1") {
+            console.log("bought champ 1")
+            //action
         }
     }
 
@@ -30,6 +33,11 @@ class Room extends React.Component {
             return (
                 <div>
                     <Typography variant="h1">{'Room Id: ' + this.props.roomId}</Typography>
+                    <Button
+                        onClick={()=>this.resolveClick("PurchaseChampion1")}
+                        variant="contained"
+                        color="primary"
+                    >PURCHASE CHAMPION 1</Button>
                 </div>
             )
         }
