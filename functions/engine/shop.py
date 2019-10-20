@@ -6,8 +6,8 @@ from character import *
 profile_ids = ['p0', 'p1', 'p2', 'p3', 'p4', 'p5']
 
 
-garen_pool = ["garen" for i in range(15)]
-darius_pool = ["darius" for i in range(15)]
+garen_pool = [Garen(0, 0) for i in range(15)]
+darius_pool = [Darius(0, 0) for i in range(15)]
 initial_pool = garen_pool + darius_pool
 
 class Player:
@@ -93,13 +93,13 @@ def game_loop(names):
 		# Economy
 		for p in [winner, loser]:
 			if p.winstreak >= 7 or p.losestreak >= 7:
-				p.gold += econ + 3
+				p.gold += p.econ + 3
 			elif p.winstreak >= 5 or p.losestreak >= 5:
-				p.gold += econ + 2
+				p.gold += p.econ + 2
 			elif p.winstreak >= 3 or p.losestreak >= 3:
-				p.gold += econ + 1
+				p.gold += p.econ + 1
 			else:
-				p.gold += econ
+				p.gold += p.econ
 
 
 

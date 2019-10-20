@@ -63,7 +63,7 @@ class Garen(Character):
 			self.init_health = 1080
 			self.health = 1080
 			self.atk = 90
-		else if self.level == 2:
+		elif self.level == 2:
 			self.level += 1
 			self.init_health = 2160
 			self.health = 2160
@@ -76,7 +76,7 @@ class Garen(Character):
 		self.mr = 999
 		if self.level == 1:
 			ult_damage = int(360 / 4)
-		else if self.level == 2:
+		elif self.level == 2:
 			ult_damage = int(585 / 4)
 		else:
 			ult_damage = int(810 / 4)
@@ -88,7 +88,7 @@ class Garen(Character):
 				surrounding_champions.append(possible_champion)
 		for champ in surrounding_champions:
 			dmg_multiplier = 100 / (100 + champ.armor)
-			dmg_given = ult_damage 8 dmg_multiplier
+			dmg_given = ult_damage * dmg_multiplier
 			champ.health -= dmg_given
 		self.ulted_time += 1
 		if self.ulted_time == self.ult_time:
@@ -116,7 +116,7 @@ class Darius(Character):
 			self.init_health = 1080
 			self.health = 1080
 			self.atk = 90
-		else if self.level == 2:
+		elif self.level == 2:
 			self.level += 1
 			self.init_health = 2160
 			self.health = 2160
@@ -129,7 +129,7 @@ class Darius(Character):
 		if self.level == 1:
 			ult_damage = 150
 			heal = 100
-		else if self.level == 2:
+		elif self.level == 2:
 			ult_damage = 200
 			heal = 150
 		else:
@@ -143,7 +143,7 @@ class Darius(Character):
 				surrounding_champions.append(possible_champion)
 		for champ in surrounding_champions:
 			dmg_multiplier = 100 / (100 + champ.armor)
-			dmg_given = ult_damage 8 dmg_multiplier
+			dmg_given = ult_damage * dmg_multiplier
 			champ.health -= dmg_given
 		self.hp = min(self.hp + heal, init_health)
 
