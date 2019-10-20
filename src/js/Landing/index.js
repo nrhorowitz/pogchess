@@ -53,6 +53,7 @@ class Landing extends React.Component {
 
     renderAuthButtons() {
         if (this.props.firebase.auth().currentUser) {
+            console.log(this.props.firebase.auth().currentUser);
             return (
                 <div class="button-wrapper">
                     <Button 
