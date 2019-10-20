@@ -24,6 +24,11 @@ class Character:
 	def __str__(self):
 		return self.name
 
+	def attack(self, opponent):
+		dmg_multiplier = 100 / ( 100 + opponent.armor)
+		dmg_given = dmg_multiplier * self.atk
+		opponent.health -= dmg_given 
+
 	def is_dead():
 		if self.health <= 0:
 			return True
@@ -66,14 +71,8 @@ class Garen(Character):
 		else:
 			return
 
-
-	def attack(self, opponent):
-		""" The fundamental gameplay operation. Assumed in range."""
-		dmg_multiplier = 100 / ( 100 + opponent.armor)
-		dmg_given = dmg_multiplier * self.atk
-		opponent.health -= dmg_given 
-
 	def castUlt(self, board):
+		self.mana = 0
 		self.mr = 999
 		if self.level == 1:
 			ult_damage = int(360 / 4)
@@ -125,14 +124,8 @@ class Darius(Character):
 		else:
 			return
 
-
-	def attack(self, opponent):
-		""" The fundamental gameplay operation. Assumed in range."""
-		dmg_multiplier = 100 / ( 100 + opponent.armor)
-		dmg_given = dmg_multiplier * self.atk
-		opponent.health -= dmg_given 
-
 	def castUlt(self, board):
+		self.mana = 0
 		if self.level == 1:
 			ult_damage = 150
 			heal = 100
