@@ -8,8 +8,7 @@ import Loading from '../Loading';
 
 import { BrowserRouter as Router, Route, Link, Redirect, Switch } from "react-router-dom";
 import firebase from '../Firebase';
-
-import '../../css/index.css';
+import MatchFinder from '../MatchFinder';
 
 
 const uuidv1 = require('uuid/v1');
@@ -153,6 +152,12 @@ class App extends React.Component {
                 data = {this.data}
             ></Dashboard>
         )
+      } else if (name === "MatchFinder") {
+        return (
+          <MatchFinder
+            firebase={firebase}
+          ></MatchFinder>
+        )
       }
     }
 
@@ -172,6 +177,7 @@ class App extends React.Component {
                 <Route exact path="/createroom" component={() => this.renderView("CreateRoom")} />
                 <Route exact path="/room" component={(id) => this.renderView("Room", id)} />
                 <Route exact path="/dashboard" component={() => this.renderView("Dashboard")} />
+                <Route exact path="/matchfinder" component={() => this.renderView("MatchFinder")} />
 
 
               </Switch>

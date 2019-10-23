@@ -85,10 +85,10 @@ class LoginMenu extends React.Component {
 
     resolveClick(type) {
         if (type === "Login") {
-            console.log("OK");
+            this.signUpUser("Login");
         } else if (type === "SignUp") {//TODO: check token
             //this.setState({redirect: '/signup'});
-            this.signUpUser();
+            this.signUpUser("Email");
         } else if (type === "Google") {
             this.signUpUser("Google");
         }
@@ -119,19 +119,34 @@ class LoginMenu extends React.Component {
                 console.log(errorMessage);
                 // ...
               });
+        } else if (type === "Email") {
+            this.props.firebase.auth().createUserWithEmailAndPassword(this.state.inputEmail, this.state.inputPassword).catch((error) => {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // ...
+                console.log("ERRORCODE: ", errorCode);
+                console.log("ERRORMESSAGE: ", errorMessage);
+                if (errorCode === "auth/invalid-email") {
+                    this.setState({inputEmailError: true});
+                    this.setState({errorMessage: "Email must be a valid email"});
+                }
+            });
+        } else if (type === "Login") {
+            this.props.firebase.auth().signInWithEmailAndPassword(this.state.inputEmail, this.state.inputPassword).catch((error) => {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // ...
+                console.log("ERRORCODE: ", errorCode);
+                console.log("ERRORMESSAGE: ", errorMessage);
+                if (errorCode === "auth/invalid-email") {
+                    this.setState({inputEmailError: true});
+                    this.setState({errorMessage: "Email must be a valid email"});
+                }
+            });
         }
-        this.props.firebase.auth().createUserWithEmailAndPassword(this.state.inputEmail, this.state.inputPassword).catch((error) => {
-            // Handle Errors here.
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            // ...
-            console.log("ERRORCODE: ", errorCode);
-            console.log("ERRORMESSAGE: ", errorMessage);
-            if (errorCode === "auth/invalid-email") {
-                this.setState({inputEmailError: true});
-                this.setState({errorMessage: "Email must be a valid email"});
-            }
-        });
+        
     }
     
     render() {
