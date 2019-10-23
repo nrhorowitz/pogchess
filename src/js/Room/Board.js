@@ -40,9 +40,9 @@ class Board extends React.Component {
     render() {
         return (
             <Grid container>
-                {this.renderRow(0, 4)}
-                {this.renderRow(5, 9)}
-                {this.renderRow(10, 14)}
+                {this.renderRow(0, 5)}
+                {this.renderRow(6, 11)}
+                {this.renderRow(12, 17)}
             </Grid>
         )
     }
