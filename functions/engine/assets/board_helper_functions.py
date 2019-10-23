@@ -12,16 +12,20 @@ def find_surrounding_positions(y, x):
 	return surrounding_positions
 
 #getters and setters for champion position.
-def x_pos(self):
+def get_x_pos(self):
 	return self.x
 
-def y_pos(self):
+def get_y_pos(self):
 	return self.y
 
-def set_x_pos(self, pos):
-	self.x = pos
+def set_x_pos(self, xcoordinate):
+	self.x = xcoordinate
 	return None
-	
-def set_y_pos(self, pos):
-	self.y = pos
+
+def set_y_pos(self, ycoordinate):
+	self.y = ycoordinate
 	return None
+
+def euclidean_distance(a, b):
+    #takes in champs a and b, then calculates the distance between them.
+    return ((a.get_x_pos() - b.get_x_pos())**2 + (a.get_y_pos() - b.get_y_pos())**2) ** .5

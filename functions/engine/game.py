@@ -1,18 +1,14 @@
-#for now, don't put anything into position 0, 0 because that's what I use to see if i fucked up.
 
-projected_positions = {} #maps champ object to position tuples.
+projected_positions = {} #maps champ object to position tuples (y,x).
 import random
+import board_helper_functions
+import character #not sure if I even need but just in case.
 random.seed(5) # SHOULD POSSIBLY BE USING SECRETS INSTEAD FOR SECURITY!?
 #currently using seed 5 for deterministic testing, eventually replace with no arg
 
 
 #TODO NEXT TIME:
-    # Change the necessary condition for attacking to be distance 1, because if they are
-    #distance 0, then the second one replaces the first. Also it's more aesthetic.
-    #my previous bug was that once they are in the same edge column, then they have no move- because im not sure,
-    #but i think because i make hor 0 in that case right, which means that both are in the same column. I THINK
-    #that i should make separate cases for the left versus right border, then make them go inside.
-    #Finish debugging with a couple more test cases, then start working on other stuff!
+    # Finish implementing diagonal movement and then debug.
 
 def pathing(board):
     #input: current board, 6x6 array of champions. This function updates the board so that each
@@ -43,9 +39,11 @@ def pathing(board):
             if (dist < min_dist):
                 min_dist = dist
                 min_dist_champ = b
-        a.pos = find_projected_position(a, min_dist_champ)
+        projected_pos = find_projected_position(a, min_dist_champ)
+        a.set_y_pos(projected_pos[0])
+        a.set_x_pos(projected_pos[1])
         #projected_positions map - champion object to tuple (the x, y position)
-        projected_positions[a] = a.pos
+        projected_positions[a] = projected_pos
         min_dist = 9999999999
         min_dist_champ = None
 
@@ -64,9 +62,11 @@ def pathing(board):
             if (dist < min_dist):
                 min_dist = dist
                 min_dist_champ = b
-        a.pos = find_projected_position(a, min_dist_champ)
-        #updating the positions already right below... might not need the projected positions map at all.
-        projected_positions[a] = a.pos
+        projected_pos = find_projected_position(a, min_dist_champ)
+        a.set_y_pos(projected_pos[0])
+        a.set_x_pos(projected_pos[1])
+        #projected_positions map - champion object to tuple (the x, y position)
+        projected_positions[a] = projected_pos
         min_dist = 9999999999
         min_dist_champ = None
 
@@ -77,11 +77,11 @@ def pathing(board):
     #place them into a new board
 
     for a in a_champs:
-        board[a.pos[0]][a.pos[1]] = a
-        print(a.pos)
+        board[a.get_y_pos()][a.get_x_pos()] = a
+        print((a.get_y_pos(), a.get_x_pos()))
     for b in b_champs:
-        board[b.pos[0]][b.pos[1]] = b
-        print(b.pos)
+        board[b.get_y_pos()][b.get_x_pos()] = b
+        print((b.get_y_pos(), b.get_x_pos()))
         #for testing
     for row in board:
         print(row)
@@ -91,60 +91,74 @@ def pathing(board):
 
 
 def find_projected_position(a, b):
-    #takes champs a and b, then uses their respective positions to move closer, in a random direction.
-    #want to stay in boundary. Make sure you don't overlap with another position
-    #case work: 1. if distance = 0, don't do anything. I THINK THEY WILL HAPPEN IF I USE PROJECTED POSITIONS IN PART B.
-    #AGAIN, IT'S TO AVOID THE CASE THAT TWO THINGS ARE DISTANCE ONE AWAY AND JUST KEEP SWAPPING PLACES WITH EACH OTHER
-    #2. If on the border, only go vertically. If both options available, go vertical. Eventually I will swap these to be random instead.
-    if euclidean_distance(a, b) == 1:
-        return a.pos
+    #takes champs a and b, then uses their respective positions to move champ a closer to champ b.
+    #case work: 1. if they are adjacent, don't move.
+
+    if euclidean_distance(a, b) == 1 || euclidean_distance(a,b) = sqrt(2):
+        return (a.get_y_pos(), a.get_x_pos())
 
     #First, find the relative directions that a should move. Now it is a matter of seeing what is valid, and randomness if necessary.
     hor = 6 #out of range for testing.
     ver = 6
-    if a.pos[0] < b.pos[0]: # a is above b
+    if (a.get_y_pos() < b.get_y_pos()): # a is above b
         ver = 1
-    elif b.pos[0] == a.pos[0]: # a is on the same row as b (same height)
+    elif (a.get_y_pos() == b.get_y_pos()): # a is on the same row as b (same height)
         ver = 0
     else:
         ver = -1
 
-    if a.pos[1] < b.pos[1]: #a is to the left of b
+    if (a.get_x_pos() < b.get_x_pos()): #a is to the left of b
         hor = 1
-    elif b.pos[1] - a.pos[1] = 0: #a is on the same column as b (same width)
+    elif (a.get_x_pos() == b.get_x_pos()): #a is on the same column as b (same width)
         hor = 0
     else:
         hor = -1
 
     #now, outputting the new position.
 
-    #if they are on the same column, move closer to each other.
-    if (hor == 0):
-        if (validate(a.pos[0] + ver, a.pos[1])):
-            return (a.pos[0] + ver, a.pos[1])
-        else:
-            return a.pos
+    #Cases:
+    #1. They are on the same row or column. Move one step respectively. However, if the champion is blocked,
+    #   then take a random direction diagonal step. *random
+    #2. They are not on the same row or column. Move on diagonal step. However, if the champion is blocked,
+    #   then take a horizontal or vertical step #random.
 
-    #if they are on the same row, move closer to each other.
+    #if they are on the same column, move closer to b, vertically.
+    if (hor == 0):
+        if (validate(a.get_y_pos() + ver, a.get_x_pos())):
+            return (a.get_y_pos() + ver, a.get_x_pos())
+        else:
+            #need to put a case here say that we have a2, a1 and b standing in a vertical line. We want a2 to move towards b
+            #right now a2 will get cucked by a1.Thus, we want him to move diagonally so they can both attack b.
+            if (random.random() <= .5): #try moving left first
+                if (validate(a.get_y_pos() + ver, a.get_x_pos() - 1)):
+                    return (a.get_y_pos() + ver, a.get_x_pos() - 1)
+            if (validate(a.get_y_pos() + ver, a.get_x_pos() + 1)):
+                return (a.get_y_pos() + ver, a.get_x_pos() + 1)
+
+        #CHECK TO SEE IF THE ABOVE HAS THE CORRECT LOGIC, THEN FIX BELOW
+
+
+    #if they are on the same row, move closer to b, horizontally.
     if (ver == 0):
         if (validate(a.pos[0], a.pos[1] + hor)):
             return (a.pos[0], a.pos[1] + hor)
         else:
             return a.pos
 
-    #left or right border case, go horizontal
-    if (a.pos[0] == 0 or a.pos[0] == 5):
-        if (validate((a.pos[0] + hor, a.pos[1]))): #changed this to be + ver on the second one instead of + hor on the first one
-            return (a.pos[0] + hor, a.pos[1])       #and now i changed it back
-        else:
-            return a.pos
+    # #left or right border case, go horizontal
+    # if (a.pos[0] == 0 or a.pos[0] == 5):
+    #     if (validate((a.pos[0] + hor, a.pos[1]))): #changed this to be + ver on the second one instead of + hor on the first one
+    #         return (a.pos[0] + hor, a.pos[1])       #and now i changed it back
+    #     else:
+    #         return a.pos
+    #
+    # #top or bottom border case, go vertical
+    # elif (a.pos[1] == 0 or a.pos[1] == 5):
+    #     if (validate((a.pos[0], a.pos[1] + ver))): #also changed this
+    #         return (a.pos[0], a.pos[1] + ver)   #and now i changed it back
+    #     else:
+    #         return a.pos
 
-    #top or bottom border case, go vertical
-    elif (a.pos[1] == 0 or a.pos[1] == 5):
-        if (validate((a.pos[0], a.pos[1] + ver))): #also changed this
-            return (a.pos[0], a.pos[1] + ver)   #and now i changed it back
-        else:
-            return a.pos
     #general case with horizontal towards enemey without validation only for testing. Will turn this into random.
     else:
         if (random.random() <= .5):
@@ -158,7 +172,7 @@ def find_projected_position(a, b):
             else:
                 return a.pos
 
-    return (0, 0) #aka u fucked up
+    return a.pos #aka, there are no available spots.
 
 
 
@@ -172,12 +186,5 @@ def validate(projected_pos):
         return False
     return True
 
-
-
-
-
-def euclidean_distance(a, b):
-    #takes in champs a and b, then calculates the distance between them.
-    return ((a.pos[0] - b.pos[0])**2 + (a.pos[1] - b.pos[1])**2) ** .5
 
 #eventually return
