@@ -16,7 +16,7 @@ class Exp extends React.Component {
         return (
             <Grid item xs={2}>
                 <Button
-                    onClick={()=>this.props.resolveClick("Location", val)}
+                    onClick={()=>this.props.resolveClick("Exp", val)}
                     variant="contained"
                     color="primary"
                     fullWidth
