@@ -1,6 +1,6 @@
 from assets.constants import *
 
-def find_surrounding_positions(x, y):
+def find_surrounding_positions(y, x):
 	possible_surrounding_positions = [(x+1, y+1), (x, y+1), (x-1, y+1),
 								 		  (x+1, y), (x-1, y),
 								 		  (x+1, y-1), (x, y-1), (x-1, y-1)]
