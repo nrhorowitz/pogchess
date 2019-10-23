@@ -11,6 +11,19 @@
   z-index: 2;
 }
 
+.card-auth {
+  border: 12px outset rgb(74, 149, 198);
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  border-radius: 5px; /* 5px rounded corners */
+  background-color: rgba(28,110,164,1);
+  padding: 6px 16px;
+  max-width: 450px;
+  margin: auto;
+  margin-top: 20px;
+  z-index: 2;
+}
+
 .container {
   padding: 2px 16px;
 }

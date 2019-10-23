@@ -1,7 +1,5 @@
 import React from 'react';
 import Landing from '../Landing';
-import Login from '../Login';
-import SignUp from '../SignUp';
 import CreateRoom from '../CreateRoom';
 import Room from '../Room';
 import Dashboard from '../Dashboard';
@@ -130,18 +128,6 @@ class App extends React.Component {
                     firebase = {firebase}
                 ></Landing>
             )
-        } else if (name === "Login") {
-            return (
-                <Login
-                    firebase = {firebase}
-                ></Login>
-            )
-        } else if (name === "SignUp") {
-            return (
-                <SignUp
-                    firebase = {firebase}
-                ></SignUp>
-            )
         } else if (name === "CreateRoom") {
           return (
               <CreateRoom
@@ -183,8 +169,6 @@ class App extends React.Component {
             <Router>
               <Switch>
                 <Route exact path="/" component={() => this.renderView("Landing")} />
-                <Route exact path="/login" component={() => this.renderView("Login")} />
-                <Route exact path="/signup" component={() => this.renderView("SignUp")} />
                 <Route exact path="/createroom" component={() => this.renderView("CreateRoom")} />
                 <Route exact path="/room" component={(id) => this.renderView("Room", id)} />
                 <Route exact path="/dashboard" component={() => this.renderView("Dashboard")} />

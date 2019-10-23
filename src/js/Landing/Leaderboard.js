@@ -20,7 +20,6 @@ class Leaderboard extends React.Component {
     }
 
     renderSinglePlayer(playerMap) {
-        console.log(playerMap);
         return (
             <div>
                 <img src={playerMap.imageUrl}></img>

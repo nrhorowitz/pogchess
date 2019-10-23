@@ -3,6 +3,7 @@ import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
 import { BrowserRouter as Router, Route, Link, Redirect, Switch } from "react-router-dom";
 
 
@@ -18,7 +19,9 @@ class LoginMenu extends React.Component {
             errorMessage: '',
         };
         this.renderMessage = this.renderMessage.bind(this);
+        this.renderButtons = this.renderButtons.bind(this);
         this.resolveClick = this.resolveClick.bind(this);
+        this.signUpUser = this.signUpUser.bind(this);
     }
 
     renderMessage() {
@@ -33,44 +36,90 @@ class LoginMenu extends React.Component {
         }
     }
 
-    validInput(type) {
-        if (type === "email") {
-            //TODO: create actual email checker 
-            if (this.state.inputEmail.length < 8) {
-                this.setState({inputEmailError: true});
-                this.setState({errorMessage: "Email must be longer than 7 characters"});
-                return false;
-            } else {
-                this.setState({inputEmailError: false});
-                return true;
-            }
-        } else if (type === "password") {
-            if (this.state.inputPassword.length < 6) {
-                this.setState({inputPasswordError: true});
-                this.setState({errorMessage: "Password must be longer than 5 characters"});
-                return false;
-            } else {
-                this.setState({inputPasswordError: false});
-                return true;
-            }
-        }
+    renderButtons() {
+        return (
+            <Grid container>
+                <Grid item xs={6}>
+                    <Button 
+                        variant='contained' 
+                        color="primary"
+                        onClick={()=>this.resolveClick("Login")}
+                        fullWidth
+                    >LOGIN</Button>
+                </Grid>
+                <Grid item xs={6}>
+                    <Button 
+                        variant='contained' 
+                        color="primary" 
+                        onClick={()=>this.resolveClick("SignUp")}
+                        fullWidth
+                    >CREATE ACCOUNT</Button>
+                </Grid>
+                <Grid item xs={4}>
+                    <Button 
+                        variant='contained' 
+                        color="primary" 
+                        onClick={()=>this.resolveClick("Google")}
+                        fullWidth
+                    >GOOGLE</Button>
+                </Grid>
+                <Grid item xs={4}>
+                    <Button 
+                        variant='contained' 
+                        color="primary" 
+                        onClick={()=>this.resolveClick("Facebook")}
+                        fullWidth
+                    >FACEBOOK</Button>
+                </Grid>
+                <Grid item xs={4}>
+                    <Button 
+                        variant='contained' 
+                        color="primary" 
+                        onClick={()=>this.resolveClick("Github")}
+                        fullWidth
+                    >GITHUB</Button>
+                </Grid>
+            </Grid>
+        )
     }
 
     resolveClick(type) {
         if (type === "Login") {
-            if (this.validInput("email") && this.validInput("password")) {
-                console.log("OK");
-            }
-        }
-        if (type === "SignUp") {//TODO: check token
+            console.log("OK");
+        } else if (type === "SignUp") {//TODO: check token
             //this.setState({redirect: '/signup'});
-            if (this.validInput("email") && this.validInput("password")) {
-                this.signUpUser();
-            }
+            this.signUpUser();
+        } else if (type === "Google") {
+            this.signUpUser("Google");
         }
     }
 
-    signUpUser() {
+    signUpUser(type=false) {
+        if (type == "Google") {
+            var provider = new this.props.firebase.auth.GoogleAuthProvider();
+            provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+            this.props.firebase.auth().languageCode = 'en';
+            provider.setCustomParameters({
+                'login_hint': 'user@example.com'
+            });
+            this.props.firebase.auth().signInWithPopup(provider).then((result) => {
+                // This gives you a Google Access Token. You can use it to access the Google API.
+                var token = result.credential.accessToken;
+                // The signed-in user info.
+                var user = result.user;
+                // ...
+              }).catch((error) => {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // The email of the user's account used.
+                var email = error.email;
+                // The firebase.auth.AuthCredential type that was used.
+                var credential = error.credential;
+                console.log(errorMessage);
+                // ...
+              });
+        }
         this.props.firebase.auth().createUserWithEmailAndPassword(this.state.inputEmail, this.state.inputPassword).catch((error) => {
             // Handle Errors here.
             var errorCode = error.code;
@@ -86,44 +135,28 @@ class LoginMenu extends React.Component {
     }
     
     render() {
-        if (this.state.redirect !== '') {
-            return (
-                <Redirect push to={this.state.redirect}></Redirect>
-            )
-        } else {
-            return (
-                <div className='log-page'>
-                    <div className='log-content'>
-                        <div className='log-field-container'>
-                            <div className='log-input-container'>
-                                <TextField 
-                                    label='USERNAME/EMAIL' 
-                                    variant="outlined" 
-                                    fullWidth 
-                                    error={this.state.inputEmailError} 
-                                    value={this.state.inputEmail}
-                                    onChange={(e)=>this.setState({inputEmail: e.target.value})}
-                                ></TextField>
-                            </div>
-                            <div className='log-input-container'>
-                                <TextField 
-                                    label='PASSWORD' 
-                                    variant="outlined" 
-                                    fullWidth 
-                                    error={this.state.inputPasswordError}
-                                    value={this.state.inputPassword}
-                                    onChange={(e)=>this.setState({inputPassword: e.target.value})}
-                                ></TextField>
-                            </div>
-                        </div>
-                        {/*<div className='log-forgot-password'>Forgot password?</div>*/}
-                        <Button variant='contained' color="primary" onClick={()=>this.resolveClick("Login")}>LOGIN</Button>
-                        <Button variant='contained' color="primary" onClick={()=>this.resolveClick("SignUp")}>CREATE ACCOUNT</Button>
-                        {this.renderMessage()}
-                    </div>
-                </div>
-            )
-        }
+        return (
+            <div className="card-auth">
+                <TextField 
+                    label='USERNAME/EMAIL' 
+                    variant="outlined" 
+                    fullWidth 
+                    error={this.state.inputEmailError} 
+                    value={this.state.inputEmail}
+                    onChange={(e)=>this.setState({inputEmail: e.target.value})}
+                />
+                <TextField 
+                    label='PASSWORD' 
+                    variant="outlined" 
+                    fullWidth 
+                    error={this.state.inputPasswordError}
+                    value={this.state.inputPassword}
+                    onChange={(e)=>this.setState({inputPassword: e.target.value})}
+                />   
+                {this.renderButtons()}
+                {this.renderMessage()}
+            </div>
+        )
     }
 }
 
