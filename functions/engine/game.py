@@ -11,19 +11,20 @@ random.seed(5) # SHOULD POSSIBLY BE USING SECRETS INSTEAD FOR SECURITY!?
     #distance 0, then the second one replaces the first. Also it's more aesthetic.
     #my previous bug was that once they are in the same edge column, then they have no move- because im not sure,
     #but i think because i make hor 0 in that case right, which means that both are in the same column. I THINK
-    #that i should make separate cases for the left versus right border, then make them go inside. 
+    #that i should make separate cases for the left versus right border, then make them go inside.
     #Finish debugging with a couple more test cases, then start working on other stuff!
 
 def pathing(board):
-    #board is 6x6 array. a_champs list of team a champs. b_champs list of team b champs.
-    #input: current board with everyone in it. This function updates the board so that each
-    #champion moves closer to a select target. Moves horizontal/vertical randomly.
-    #right now, there is a "priority" of sorts, as in the champions who go earlier in the loop have more freedom in where to go.
+    #input: current board, 6x6 array of champions. This function updates the board so that each
+    #champion moves closer to a select target. Moves horizontal/vertical pseudorandomly.
+    #There is a "priority" of sorts, as in the champions who go earlier in the loop have more freedom in where to go.
+
+    #board: Origin is at top left corner.
 
     #first, construct a_champs and b_champs through a linear pass through the board.
     # while doing so, make each one of the locations None (as they will no longer reside there).
-    a_champs = []
-    b_champs = []
+    a_champs = [] #list of champs. Team a is the top team
+    b_champs = [] #list of champs. Team b is the bottom team.
     for i in range(len(board)):
         for j in range(len(board[i])):
             if ((board[i][j] is not None)):
@@ -32,7 +33,7 @@ def pathing(board):
                 else:
                     b_champs.append(board[i][j])
             board[i][j] = None
-
+    #now finding projected positions along with moving the a champions in a direction closer to the closest enemy.
     min_dist = 9999999999
     min_dist_champ = None
     #create a dictionary mapping from a champ to b champ, where b champ is the least distance champ to a champ
@@ -43,19 +44,18 @@ def pathing(board):
                 min_dist = dist
                 min_dist_champ = b
         a.pos = find_projected_position(a, min_dist_champ)
-        #updating the positions already right above... might not need the projected positions map at all. jk i need it for validate
+        #projected_positions map - champion object to tuple (the x, y position)
         projected_positions[a] = a.pos
         min_dist = 9999999999
         min_dist_champ = None
 
 
     # print(projected_positions.values())
+
     #clear all of a's positions from projected_positions
     projected_positions.clear()
 
-    #When doing the same for b_champs, this time use the projected a positions to calculate. Thus this takes care
-    #of the case that they are one apart initially. Now they will be on the same spot. If they are on the same spot, then
-    # don't do anything.
+    #When doing the same for b_champs, this time use the projected a positions to calculate.
 
     #a still refers to the first argument champ. Note how I'm now looping through the b_champs in the outer loop tho.
     for a in b_champs:
@@ -96,25 +96,41 @@ def find_projected_position(a, b):
     #case work: 1. if distance = 0, don't do anything. I THINK THEY WILL HAPPEN IF I USE PROJECTED POSITIONS IN PART B.
     #AGAIN, IT'S TO AVOID THE CASE THAT TWO THINGS ARE DISTANCE ONE AWAY AND JUST KEEP SWAPPING PLACES WITH EACH OTHER
     #2. If on the border, only go vertically. If both options available, go vertical. Eventually I will swap these to be random instead.
-    if euclidean_distance(a, b) == 0:
+    if euclidean_distance(a, b) == 1:
         return a.pos
 
-    hor = 0
-    ver = 0
-    if b.pos[0] - a.pos[0] > 0: # b is to the right of a
+    #First, find the relative directions that a should move. Now it is a matter of seeing what is valid, and randomness if necessary.
+    hor = 6 #out of range for testing.
+    ver = 6
+    if a.pos[0] < b.pos[0]: # a is above b
+        ver = 1
+    elif b.pos[0] == a.pos[0]: # a is on the same row as b (same height)
+        ver = 0
+    else:
+        ver = -1
+
+    if a.pos[1] < b.pos[1]: #a is to the left of b
         hor = 1
-    elif b.pos[0] - a.pos[0] > 0:
+    elif b.pos[1] - a.pos[1] = 0: #a is on the same column as b (same width)
         hor = 0
     else:
         hor = -1
 
-    if b.pos[1] - a.pos[1] > 0: #b is above a
-        ver = 1
-    elif b.pos[1] - a.pos[1] > 0:
-        ver = 0
-    else:
-        ver = -1
-    # the above finds the relative directions that a should move. Now it is a matter of seeing what is valid, and randomness if necessary.
+    #now, outputting the new position.
+
+    #if they are on the same column, move closer to each other.
+    if (hor == 0):
+        if (validate(a.pos[0] + ver, a.pos[1])):
+            return (a.pos[0] + ver, a.pos[1])
+        else:
+            return a.pos
+
+    #if they are on the same row, move closer to each other.
+    if (ver == 0):
+        if (validate(a.pos[0], a.pos[1] + hor)):
+            return (a.pos[0], a.pos[1] + hor)
+        else:
+            return a.pos
 
     #left or right border case, go horizontal
     if (a.pos[0] == 0 or a.pos[0] == 5):
