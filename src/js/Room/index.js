@@ -5,6 +5,8 @@ import Grid from '@material-ui/core/Grid';
 import Board from './Board.js';
 import ChampionShop from './ChampionShop.js';
 import Hand from './Hand.js';
+import Reroll from './Reroll.js';
+import Exp from './Exp.js'
 import { BrowserRouter as Router, Route, Link, Redirect, Switch } from "react-router-dom";
 import { ENGINE_METHOD_NONE } from 'constants';
 
@@ -43,11 +45,21 @@ class Room extends React.Component {
                 5: null,
                 6: null,
                 7: null
-            }
+            },
+            totalPool: []
             //TODO PHASE ~5: update deck, hand, etc 
+        }
+        for (var i = 0; i < 15; i++) {
+            this.state.totalPool.push("Garen");
+            this.state.totalPool.push("Darius")
         }
         this.resolveClick = this.resolveClick.bind(this);
     }
+
+    componentWillMount() {
+        //TODO: Call player gold, champion pool, etc. from database
+    }
+
     purchaseChampion() {
         for (var i = 0; i < 8; i++) {
             if (this.state.hand[i] == null) {
@@ -93,6 +105,12 @@ class Room extends React.Component {
                         resolveClick = {this.resolveClick}
                     />
                     <Hand
+                        resolveClick = {this.resolveClick}
+                    />
+                    <Reroll
+                        resolveClick = {this.resolveClick}
+                    />
+                    <Exp
                         resolveClick = {this.resolveClick}
                     />
                 </div>
