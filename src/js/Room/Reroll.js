@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 
-class Board extends React.Component {
+class Reroll extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -16,11 +16,11 @@ class Board extends React.Component {
         return (
             <Grid item xs={2}>
                 <Button
-                    onClick={()=>this.props.resolveClick("Location", val)}
+                    onClick={()=>this.props.resolveClick("Reroll", val)}
                     variant="contained"
                     color="primary"
                     fullWidth
-                >{"L" + val}</Button>
+                >{"Reroll"}</Button>
             </Grid>
         )
     }
@@ -40,12 +40,10 @@ class Board extends React.Component {
     render() {
         return (
             <Grid container>
-                {this.renderRow(0, 5)}
-                {this.renderRow(6, 11)}
-                {this.renderRow(12, 17)}
+                {this.renderRow(0,0)}
             </Grid>
         )
     }
 }
 
-export default Board;
+export default Reroll;

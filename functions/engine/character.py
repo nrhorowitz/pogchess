@@ -2,7 +2,7 @@ from assets.constants import *
 import assets.board_helper_functions as bh
 
 class Character:
-	def __init__(self, x, y):
+	def __init__(self, y, x):
 		self.x = x
 		self.y = y
 		# Dummy instance variables, probably not needed
@@ -27,7 +27,7 @@ class Character:
 	def attack(self, opponent):
 		dmg_multiplier = 100 / ( 100 + opponent.armor)
 		dmg_given = dmg_multiplier * self.atk
-		opponent.health -= dmg_given 
+		opponent.health -= dmg_given
 
 	def is_dead():
 		if self.health <= 0:
@@ -42,8 +42,8 @@ class Character:
 		self.health = self.init_health
 
 class Garen(Character):
-	def __init__(self, x, y):
-		super().__init__(x, y)
+	def __init__(self, y, x):
+		super().__init__(y, x)
 		self.name = "Garen"
 		self.init_health = 600
 		self.health = 600
@@ -96,8 +96,8 @@ class Garen(Character):
 			self.mr = self.og_mr
 
 class Darius(Character):
-	def __init__(self, x, y):
-		super().__init__(x, y)
+	def __init__(self, y, x):
+		super().__init__(y, x)
 		self.name = "Darius"
 		self.init_health = 600
 		self.health = 600
