@@ -22,6 +22,7 @@ class Room extends React.Component {
                 2: null,
                 3: null,
                 4: null,
+                5: null,
                 6: null,
                 7: null,
                 8: null,
@@ -47,7 +48,8 @@ class Room extends React.Component {
             },
             totalPool: [],
             playerPool: [],
-            currentSelction: null,
+            currentSelection: null,
+            currentSelectionIndex: null,
             //DUMMY CODE - NEED TO PULL THIS DATA FROM DATABASE
             startingBoard: {
                 0: null,
@@ -55,6 +57,7 @@ class Room extends React.Component {
                 2: null,
                 3: null,
                 4: null,
+                5: null,
                 6: null,
                 7: null,
                 8: null,
@@ -68,16 +71,18 @@ class Room extends React.Component {
                 16: null,
                 17: null
             },
-            playerGold: 0,
+            playerGold: 100,
             playerEXP: 0,
             playerLevel: 1,
             totalChampionSlots: 3,
             placedChampions: 0
             //END DUMMY CODE
         }
+        // Initialize stuff
+        this.state.board = this.state.startingBoard;
         for (var i = 0; i < 15; i++) {
-            this.state.totalPool.push(("Garen", 1));
-            this.state.totalPool.push(("Darius", 1));
+            this.state.totalPool.push(["Garen", 1]);
+            this.state.totalPool.push(["Darius", 1]);
         }
         while (this.state.playerPool.length < 5) {
             var length = this.state.totalPool.length;
@@ -107,14 +112,16 @@ class Room extends React.Component {
                 if (this.state.hand[i] == null) {
                     this.state.hand[i] = champion;
                     this.state.playerPool[val1] = null;
+                    this.state.playerGold -= this.getChampionCost(champion);
                     return;
                 }
             }
         }
     }
 
-    selectChampion(champion) {
+    selectChampion(champion, val1) {
         this.state.currentSelection = champion;
+        this.state.currentSelectionIndex = val1;
     }
 
     placeChampion(champion, val1) {
@@ -123,6 +130,7 @@ class Room extends React.Component {
         }
         else {
             this.state.currentSelection = null;
+            this.state.currentSelectionIndex = null;
         }
         this.state.board[val1] = champion;
     }
@@ -152,35 +160,97 @@ class Room extends React.Component {
 
     exp() {
         this.state.exp += 4;
-        // CHECK FOR LEVEL UP MECHANICS BLAH BLAH BLAH
+        this.levelUp();
     }
 
     levelUp() {
-        // level up
-        // roll over exp
-        // add champion slot
-        // add more champions to pool
+        // lower_bound <= level < upper_bound
+        var expNeeded = [0, 2, 4, 10, 20, 40, 72, 122, 188, 9999]
+        var lvl;
+        for (var i = 0; i < expNeeded.length - 1; i++) {
+            if (this.state.playerEXP < expNeeded[i+1]) {
+                lvl = i + 1;
+                break;
+            }
+        }
+        if (lvl != this.state.playerLevel) {
+            this.state.totalChampionSlots += 1;
+            if (lvl == 2) {
+                this.addChampsLevel2();
+            }
+            else if (lvl == 3) {
+                this.addChampsLevel3();
+            }
+            else if (lvl == 4) {
+                this.addChampsLevel4();
+            }
+            else if (lvl == 5) {
+                this.addChampsLevel5();
+            }
+            else if (lvl == 6) {
+                this.addChampsLevel6();
+            }
+            else if (lvl == 7) {
+                this.addChampsLevel7();
+            }
+            else if (lvl == 8) {
+                this.addChampsLevel8();
+            }
+            else if (lvl == 9) {
+                this.addChampsLevel9();
+            }
+        }
+        this.state.playerLevel = lvl;
+    }
+    
+    addChampsLevel2() {
+        return;
+    }
+    addChampsLevel3() {
+        return;
+    }
+    addChampsLevel4() {
+        return;
+    }
+    addChampsLevel5() {
+        return;
+    }
+    addChampsLevel6() {
+        return;
+    }
+    addChampsLevel7() {
+        return;
+    }
+    addChampsLevel8() {
+        return;
+    }
+    addChampsLevel9() {
+        return;
     }
 
     resolveClick(type, val1=false) {
         if (type === "PurchaseChampion") {
             if (this.state.playerPool[val1] != null) {
+                console.log("Purchased Champion!")
                 var bought = this.state.playerPool[val1];
                 this.purchaseChampion(bought, val1);
             }
         } else if (type === "EndPlacementTurn") {
             console.log("END TURN");
-            // push data to server
-            // next screen
+            for (var i = 0; i < 18; i++) {
+                console.log(this.state.board[i]);
+            }
         } else if (type === "Location") {
-            if (this.state.currentSelction != null) {
+            if (this.state.currentSelection != null) {
                 this.placeChampion(this.state.currentSelection, val1);
             }
-            console.log("CLICKED LOCATION " + val1);
         } else if (type == "Reroll") {
             this.reroll();
         } else if (type == "Exp") {
             this.exp();
+        } else if (type == "ClickHand") {
+            var selected = this.state.hand[val1];
+            this.selectChampion(selected, val1);
         }
     }
 
