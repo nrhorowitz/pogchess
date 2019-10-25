@@ -40,7 +40,8 @@ class Hand extends React.Component {
     render() {
         return (
             <Grid container>
-                {this.renderRow(0, 4)}
+                {this.renderRow(0, 3)}
+                {this.renderRow(4, 7)}
             </Grid>
         )
     }

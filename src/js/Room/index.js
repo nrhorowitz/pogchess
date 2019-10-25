@@ -49,7 +49,8 @@ class Room extends React.Component {
             totalPool: [],
             playerPool: [],
             currentSelection: null,
-            currentSelectionIndex: null,
+            previousLocation: null,
+            previousIndex: null,
             //DUMMY CODE - NEED TO PULL THIS DATA FROM DATABASE
             startingBoard: {
                 0: null,
@@ -113,6 +114,7 @@ class Room extends React.Component {
                     this.state.hand[i] = champion;
                     this.state.playerPool[val1] = null;
                     this.state.playerGold -= this.getChampionCost(champion);
+                    console.log("Purchased Champion!")
                     return;
                 }
             }
@@ -121,7 +123,21 @@ class Room extends React.Component {
 
     selectChampion(champion, val1) {
         this.state.currentSelection = champion;
-        this.state.currentSelectionIndex = val1;
+        this.state.hand[val1] = null;
+        this.state.previousLocation = "hand";
+        this.state.previousIndex = val1;
+    }
+
+    returnToHand(val1) {
+        this.state.hand[val1] = this.state.currentSelection;
+        this.state.currentSelection = null;
+    }
+
+    moveChampion(val1) {
+        this.state.currentSelection = this.state.board[val1];
+        this.state.board[val1] = null;
+        this.state.previousLocation = "board";
+        this.state.previousIndex = val1;
     }
 
     placeChampion(champion, val1) {
@@ -130,7 +146,6 @@ class Room extends React.Component {
         }
         else {
             this.state.currentSelection = null;
-            this.state.currentSelectionIndex = null;
         }
         this.state.board[val1] = champion;
     }
@@ -231,24 +246,40 @@ class Room extends React.Component {
     resolveClick(type, val1=false) {
         if (type === "PurchaseChampion") {
             if (this.state.playerPool[val1] != null) {
-                console.log("Purchased Champion!")
                 var bought = this.state.playerPool[val1];
                 this.purchaseChampion(bought, val1);
             }
         } else if (type === "EndPlacementTurn") {
             console.log("END TURN");
+            if (this.state.previousLocation == "board" && this.state.currentSelection != null) {
+                this.state.board[this.state.previousIndex] = this.state.currentSelection;
+                this.state.previousLocation = null;
+                this.state.previousIndex = null;
+                this.state.currentSelection = null;
+            } else if (this.state.previousLocation == "hand" && this.state.currentSelection != null) {
+                this.state.hand[this.state.previousIndex] = this.state.currentSelection;
+                this.state.previousLocation = null;
+                this.state.previousIndex = null;
+                this.state.currentSelection = null;
+            }
             for (var i = 0; i < 18; i++) {
                 console.log(this.state.board[i]);
             }
         } else if (type === "Location") {
             if (this.state.currentSelection != null) {
                 this.placeChampion(this.state.currentSelection, val1);
+            } else {
+                this.moveChampion(val1);
             }
+
         } else if (type == "Reroll") {
             this.reroll();
         } else if (type == "Exp") {
             this.exp();
         } else if (type == "ClickHand") {
+            if (this.state.hand[val1] == null) {
+                this.returnToHand(val1);
+            }
             var selected = this.state.hand[val1];
             this.selectChampion(selected, val1);
         }
